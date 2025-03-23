@@ -73,3 +73,52 @@ body {
     @apply bg-background text-foreground;
    }
 }
+
+/* width */
+::-webkit-scrollbar {
+   width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+   background: #f1f1f1;
+}
+
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+   background: #888;
+   border-radius: 5px;
+}
+
+/*Handle on hover*/
+::-webkit-scrollbar-thumb:hover {
+   background: #555;
+}
+/* For Firefox */
+* {
+   scrollbar-width: thin;
+   scrollbar-color: #888 #f1f1f1;
+}
+
+
+@layer base {
+   * {
+     @apply border-border;
+   }
+   body {
+     @apply bg-background text-foreground;
+   }
+   h1 {
+     @apply text-2xl font-bold;
+   }
+   h2 {
+     @apply text-xl font-bold;
+   }
+   h3 {
+     @apply text-lg font-bold;
+   }
+   pre {
+     @apply p-2 bg-foreground text-background rounded-md;
+   }
+ }

@@ -1,9 +1,39 @@
-import Image from "next/image";
+import CategoryList from "@/components/frontend/CategoryList";
+import CommunityTrainings from "@/components/frontend/CommunityTrainings";
+import Hero from "@/components/frontend/Hero";
+import MarketList from "@/components/frontend/MarketList";
+import { getData } from "@/lib/getData";
+import { Prisma } from "@prisma/client";
 
-export default function Home() {
+
+export default async function Home() {
+    
+   const categoriesDta = await getData('categories');   
+
+  const categories = categoriesDta.filter((category: Prisma.CategoryGetPayload<{ include: { products: true } }>)=>{
+
+    return category.products.length > 3
+    
+  });
+
   return (
-   <div className="flex flex-col justify-center items-center min-h-screen">
-       <h1 className="text-4xl">Wellcome to Limi Ecommerce</h1> 
-   </div>
+    <div className="min-h-screen">
+      <Hero />
+      <MarketList />
+
+       {
+        categories.map((category: Prisma.CategoryGetPayload<{ include: { products: true } }>,i: number) => {
+          return (
+            <div className="py-8" key={i}>
+            <CategoryList category={category} />
+          </div>
+          )
+        })
+       }
+
+      <CommunityTrainings />
+      {/* <h1 className="text-4xl">Wellcome to Limi Ecommerce</h1>
+      <Link href="/register-farmer" className="my-4 underline">Become a Farmer /Vendor / Supplier</Link> */}
+    </div>
   );
 }
