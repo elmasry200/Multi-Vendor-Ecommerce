@@ -1,6 +1,5 @@
 "use client";
 import * as z from "zod";
-
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -116,7 +115,6 @@ export default function NewCouponForm({ updateData }: { updateData?: Prisma.Coup
                             </FormItem>
                         )}
                     />
-
                 </div>
                 <SubmitButton
                     isLoading={loading}

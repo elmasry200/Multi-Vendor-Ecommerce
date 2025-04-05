@@ -18,10 +18,10 @@ import { Input } from "@/components/ui/input";
 import CardWrapper from "@/components/frontend/auth/card-wrapper";
 import SubmitButton from "@/components/backoffice/SubmitButton";
 import toast from "react-hot-toast";
-import { useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 //import { fa } from "@faker-js/faker";
 
-export default function RegisterForm({role="USER"}: {role: string} ) {
+export default function RegisterForm({ role = "USER" }: { role: string }) {
 
   const router = useRouter();
 
@@ -40,43 +40,43 @@ export default function RegisterForm({role="USER"}: {role: string} ) {
 
   const onSubmit = async (values: z.infer<typeof RegisterSchema>) => {
 
-try{   
+    try {
       console.log(values);
       setLoading(true);
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-      const response = await fetch(`${baseUrl}/api/users`,{
+      const response = await fetch(`${baseUrl}/api/users`, {
         method: "POST",
         headers: {
-            "Content-Type": "application/json",
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(values)
       });
       const responseData = await response.json();
-      if(response.ok) {
+      if (response.ok) {
         console.log(responseData);
         setLoading(false);
         toast.success("User Created Successfully");
         form.reset();
-        if(role === "USER") {
+        if (role === "USER") {
           router.push("/");
         } else {
-          router.push(`/onboarding/${responseData.data.id}`);
-        } 
-                
+          router.push("/verify-email");
+        }
+
       } else {
-         setLoading(false);
-         if(response.status === 409) {
-           setEmailError("User with this Email already exists");
-           toast.error("User with this Email already exists");
-         } else {
+        setLoading(false);
+        if (response.status === 409) {
+          setEmailError("User with this Email already exists");
+          toast.error("User with this Email already exists");
+        } else {
           console.error("Server Error:", responseData.error);
           toast.error("Oops Something went wrong");
-         }
+        }
       }
-      } catch (error) {
-        setLoading(false);
-        console.error("Network Error:", error);
-        toast.error("Something went wrong, Please Try Again");
+    } catch (error) {
+      setLoading(false);
+      console.error("Network Error:", error);
+      toast.error("Something went wrong, Please Try Again");
     }
   }
 
@@ -87,10 +87,13 @@ try{
         headerHeading="Sign Up"
         backButtonLabel="Already have an account?"
         backButtonHref="/login"
+        vendorbuttonLabel= {role === "USER" ? "Are You a Farmer? Register here." : "Are You a Customer? Register here."}
+        vendorButtonHref= {role === "USER" ? "/register-farmer" : "/register"}
+        showBackButton={true}
         showSocial
       >
         <Form {...form}>
-          <form onSubmit={form.handleSubmit( onSubmit )}
+          <form onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-4"
           >
             <div className="space-y-2">
@@ -129,7 +132,7 @@ try{
                   </FormItem>
                 )}
               />
-               {emailError && <small className="text-red-600">{emailError}</small>}
+              {emailError && <small className="text-red-600">{emailError}</small>}
               <FormField
                 control={form.control}
                 name="password"

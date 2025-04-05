@@ -12,20 +12,25 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from 'next/link';
+import UserAvatar from './UserAvatar';
+import { useSession } from 'next-auth/react';
 
 interface NavbarProps {
   showSidebar: boolean;
   setShowSidebar: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Navbar({showSidebar, setShowSidebar}: NavbarProps) {
-
+export default function Navbar({ showSidebar, setShowSidebar }: NavbarProps) {
+  const {data: session, status} = useSession();
+  if(status === "loading") {
+    return <p>Loading...</p>
+  }
   return (
     <div className={showSidebar ? "flex items-center justify-between dark:bg-slate-800 bg-white text-slate-50 h-20 py-8 fixed top-0 w-full px-8 z-50 sm:pr-[18rem]" : "flex items-center justify-between dark:bg-slate-800 bg-white text-slate-50 h-20 py-8 fixed top-0 w-full px-8 z-50"} >
 
-       <Link href={"/dashboard"} className='sm:hidden'>
-       Limi
-       </Link>
+      <Link href={"/dashboard"} className='sm:hidden'>
+        Limi
+      </Link>
 
       {/* Icon */}
       <button onClick={() => setShowSidebar(!showSidebar)} className='text-lime-700 dark:text-lime-500'>
@@ -115,43 +120,8 @@ export default function Navbar({showSidebar, setShowSidebar}: NavbarProps) {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger className='outline-none'>
-            <div>
-              <Image
-                src='/profile.jpg'
-                alt='User Profile'
-                width={275}
-                height={183}
-                className='w-8 h-8 rounded-full'
-              />
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className='px-4 py-2 pr-8'>
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <div className='flex items-center space-x-2'>
-                <LayoutDashboard className="mr-2 w-4 h-4" />
-                <span>Dashboard</span>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <div className='flex items-center space-x-2'>
-                <Settings className="mr-2 w-4 h-4" />
-                <span>Edit Profile</span>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <div className='flex items-center space-x-2'>
-                <LogOut className="mr-2 w-4 h-4" />
-                <span>Logout</span>
-              </div>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-
+        {status === "authenticated" && <UserAvatar user={session?.user} />}
+      
       </div>
     </div>
   )

@@ -23,6 +23,7 @@ import ImageInput from "@/components/backoffice/ImageInput";
 
 import { User } from "@prisma/client";
 import ArrayItemsInput from "./ArrayItemsInput";
+import { useRouter } from "next/navigation";
 
 
 interface NewFarmerFormProps {
@@ -30,6 +31,7 @@ interface NewFarmerFormProps {
 }
 
 export default function NewFarmerForm({ user }: NewFarmerFormProps) {
+ const router = useRouter();
 
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -68,7 +70,8 @@ export default function NewFarmerForm({ user }: NewFarmerFormProps) {
     makePostRequest(setLoading, "api/farmers", values, "Farmer Profile", form.reset);
     setUploadedFiles([]);
     setProducts([]);
-  
+ 
+    router.push("/login");
 
   };
 

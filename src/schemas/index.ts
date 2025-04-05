@@ -183,3 +183,38 @@ export const LoginSchema = z.object({
     password: z.string(),   
 });
 export type LoginSchema = z.infer<typeof LoginSchema>;
+
+export const ForgotPasswordSchema = z.object({
+    email: z.string().email({
+        message: "Email is required"
+    }), 
+});
+export type ForgotPasswordSchema = z.infer<typeof ForgotPasswordSchema>;
+
+export const ResetPasswordSchema = z.object({
+    id: z.string(),
+    password: z.string().min(6, {
+        message: "Minimum 6 characters required"
+    }),
+});
+export type ResetPasswordSchema = z.infer<typeof ResetPasswordSchema>;
+
+// Checkout Form Validation Schema
+export const step1Schema = z.object({
+    firstName: z.string().min(2, "First name must be at least 2 characters"),
+    lastName: z.string().min(2, "Last name must be at least 2 characters"),
+    email: z.string().email("Invalid email address"),
+    phoneNumber: z.string().min(10, "Phone number must be at least 10 digits"),
+  });
+
+export const step2Schema = z.object({
+    streetAddress: z.string().nonempty("Street address is required"),
+    city: z.string().nonempty("City is required"),
+    country: z.string().nonempty("Country is required"),
+    district: z.string().nonempty("District is required"),
+    shippingCost: z.coerce.number().min(0, "Shipping cost must be at least 0"),
+  });  
+
+  export const step3Schema = z.object({
+    paymentMethod: z.string().nonempty("District is required"),
+  });  

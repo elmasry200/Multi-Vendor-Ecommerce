@@ -2,8 +2,10 @@ import CategoryList from "@/components/frontend/CategoryList";
 import CommunityTrainings from "@/components/frontend/CommunityTrainings";
 import Hero from "@/components/frontend/Hero";
 import MarketList from "@/components/frontend/MarketList";
+import { authOptions } from "@/lib/authOptions";
 import { getData } from "@/lib/getData";
 import { Prisma } from "@prisma/client";
+import { getServerSession } from "next-auth";
 
 
 export default async function Home() {
@@ -15,6 +17,9 @@ export default async function Home() {
     return category.products.length > 3
     
   });
+
+  const session = await getServerSession(authOptions);
+  console.log(session?.user);
 
   return (
     <div className="min-h-screen">

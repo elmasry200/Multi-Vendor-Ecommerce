@@ -18,15 +18,17 @@ import { Input } from "@/components/ui/input";
 import CardWrapper from "@/components/frontend/auth/card-wrapper";
 import SubmitButton from "@/components/backoffice/SubmitButton";
 import toast from "react-hot-toast";
-import { useRouter} from "next/navigation";
-//import { fa } from "@faker-js/faker";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function LoginForm() {
 
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
-  
+
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -36,39 +38,28 @@ export default function LoginForm() {
   });
 
   const onSubmit = async (values: z.infer<typeof LoginSchema>) => {
-
-try{   
-      console.log(values);
+    console.log(values);
+    try {
       setLoading(true);
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-      const response = await fetch(`${baseUrl}/api/users`,{
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values)
+      console.log("Attempting to sign in with credentials:", values);
+      const loginData = await signIn("credentials", {
+        ...values,
+        redirect: false,
       });
-      const responseData = await response.json();
-      if(response.ok) {
-        console.log(responseData);
+      console.log("SignIn response:", loginData);
+      if (loginData?.error) {
         setLoading(false);
-        toast.success("User Created Successfully");
-        form.reset();
-        
-                
+        toast.error("Sign-in error: Check your credentials");
       } else {
-         setLoading(false);
-         if(response.status === 409) {
-           toast.error("User with this Email already exists");
-         } else {
-          console.error("Server Error:", responseData.error);
-          toast.error("Oops Something went wrong");
-         }
+        toast.success("Login Successful");
+        form.reset();
+        router.push("/");
       }
-      } catch (error) {
-        setLoading(false);
-        console.error("Network Error:", error);
-        toast.error("Something went wrong, Please Try Again");
+    }
+    catch (error) {
+      setLoading(false);
+      console.error("Network Error:", error);
+      toast.error("Something went wrong, Please Try Again");
     }
   }
 
@@ -79,13 +70,16 @@ try{
         headerHeading="Sign In"
         backButtonLabel="Don't have an account?"
         backButtonHref="/register"
+        vendorbuttonLabel=""
+        vendorButtonHref="/"
+        showBackButton={false}
         showSocial
       >
         <Form {...form}>
-          <form onSubmit={form.handleSubmit( onSubmit )}
+          <form onSubmit={form.handleSubmit(onSubmit)}
             className="space-y-4"
           >
-            <div className="space-y-2">             
+            <div className="space-y-2">
 
               <FormField
                 control={form.control}
@@ -104,7 +98,7 @@ try{
                   </FormItem>
                 )}
               />
-            
+
               <FormField
                 control={form.control}
                 name="password"
@@ -123,12 +117,23 @@ try{
                 )}
               />
             </div>
-
-            <SubmitButton
-              isLoading={loading}
-              buttonTitle="Login"
-              loadingButtonTitle="Sign In User please wait..."
-            />
+            <div className="w-full flex justify-between items-center">
+              <Button
+                variant="link"
+                className="font-normal text-normal"
+                size="sm"
+                asChild
+              >
+                <Link href="forgot-password" >
+                  Forgot Password
+                </Link>
+              </Button>
+              <SubmitButton
+                isLoading={loading}
+                buttonTitle="Login"
+                loadingButtonTitle="Sign In User please wait..."
+              />
+            </div>
           </form>
         </Form>
       </CardWrapper>

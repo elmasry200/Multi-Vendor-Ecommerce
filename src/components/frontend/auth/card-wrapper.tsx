@@ -10,12 +10,16 @@ import { Header } from "@/components/frontend/auth/header";
 import { Social } from "@/components/frontend/auth/social";
 import { BackButton } from "@/components/frontend/auth/back-button";
 
+
 interface CardWrapperProps {
     children: React.ReactNode;
     headerLabel: string;
     headerHeading: string;
     backButtonLabel: string;
     backButtonHref: string;
+    vendorbuttonLabel: string;
+    vendorButtonHref: string;
+    showBackButton: boolean;
     showSocial: boolean;
 }
 
@@ -25,6 +29,9 @@ export default function CardWrapper({
     headerHeading,
     backButtonLabel,
     backButtonHref,
+    vendorbuttonLabel,
+    vendorButtonHref,
+    showBackButton = false,
     showSocial
 }: CardWrapperProps) {
 
@@ -41,11 +48,18 @@ export default function CardWrapper({
                     <Social />
                 </CardFooter>
             )}
-            <CardFooter className="-mt-6">
-                <BackButton 
-                 label={backButtonLabel}
-                 href= {backButtonHref}
+            <CardFooter className="-mt-6 flex justify-center items-center">
+                <BackButton
+                    label={backButtonLabel}
+                    href={backButtonHref}
                 />
+                {showBackButton &&
+                    <BackButton
+                        label={vendorbuttonLabel}
+                        href={vendorButtonHref}
+                    />
+
+                }
             </CardFooter>
         </Card>
 

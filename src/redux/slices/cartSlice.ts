@@ -1,7 +1,7 @@
 // Create a Slice
 // Crate a Readucers
 // export the reducer and reduces
-
+"use client";
 import { Product } from "@prisma/client";
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -13,14 +13,20 @@ interface ProductCart extends Partial<Product> {
     qty: number;
 }
 
-let initialState: ProductCart[] = [];
-try {
-    const storedCart = localStorage.getItem("cart");
-    initialState = storedCart ? JSON.parse(storedCart) : [];
-} catch (error) {
-    console.error("Error parsing cart data:", error);
-}
 
+// Get initial cart state from localStorage (client-side only)
+const initialState = (): ProductCart[] => {
+    if (typeof window !== "undefined") {
+      try {
+        const storedCart = localStorage.getItem("cart");
+        return storedCart ? JSON.parse(storedCart) : [];
+      } catch (error) {
+        console.error("Error parsing cart data:", error);
+        return [];
+      }
+    }
+    return [];
+  };
 const cartSlice = createSlice({
     name: "cart",
     initialState,
@@ -38,7 +44,7 @@ const cartSlice = createSlice({
                 const newItem = { id, title, salePrice, uploadedFiles, qty: 1 };
                 state.push(newItem);
 
-                localStorage.setItem("cart", JSON.stringify([...state, newItem]));
+                localStorage.setItem("cart", JSON.stringify([...state])); // remove newItem 
             }
         },
         removeFromCart: (state, action) => {

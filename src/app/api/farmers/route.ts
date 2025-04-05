@@ -20,10 +20,34 @@ export async function POST(request: Request) {
             landSize,
             mainCrop,
             userId,
-         } = await request.json();
+        } = await request.json();
 
-  
-     const newFarmerProfile =   await db.farmerProfile.create({
+        //Update the Verification in the user
+        //Check if the user already exits in the db
+        const existingUser = await db.user.findUnique({
+            where: {
+                id: userId,
+            }
+        });
+
+        if (!existingUser) {
+            return NextResponse.json({
+                data: null,
+                message: "No User Found"
+            }, { status: 404 });
+        }
+
+        //update email verified
+        const updateUser = await db.user.update({
+            where: {
+                id: userId,
+            },
+            data: {
+                emailVerified: true
+            },
+        })
+
+        const newFarmerProfile = await db.farmerProfile.create({
             data: {
                 name: name,
                 phone: phone,
@@ -40,11 +64,11 @@ export async function POST(request: Request) {
                 products: products,
                 landSize: landSize,
                 mainCrop: mainCrop,
-            }      
+            }
         })
         return NextResponse.json(newFarmerProfile);
     } catch (error) {
-        if (error instanceof Error){
+        if (error instanceof Error) {
             console.log("Error: ", error.stack)
         }
         console.log(error);
@@ -53,14 +77,14 @@ export async function POST(request: Request) {
                 message: "Failed to fetch Farmer",
                 error,
             },
-            {status: 500},
+            { status: 500 },
         );
     }
 }
 
 export async function GET(request: Request) {
     try {
-         const farmers = await db.user.findMany({
+        const farmers = await db.user.findMany({
             orderBy: {
                 createdAt: "desc"
             },
@@ -70,16 +94,16 @@ export async function GET(request: Request) {
             include: {
                 farmerProfile: true
             },
-         });
-         return NextResponse.json(farmers);
-    } catch (error){
+        });
+        return NextResponse.json(farmers);
+    } catch (error) {
         console.log(error);
         return NextResponse.json(
             {
                 message: "Failed to fetch Farmer Profile",
                 error,
             },
-            {status: 500},
+            { status: 500 },
         );
     }
 }
